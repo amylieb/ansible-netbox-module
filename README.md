@@ -35,8 +35,8 @@ Here's a quick example from a playbook that calls this module.
   delegate_to: localhost
   register: nb
 ```
-## using the results in a template
-Here's a quick template that uses the results (registered as 'nb' in a task)
+## Using the results in a template
+Here's a quick template that uses the results (registered as 'nb' in the corresponding task)
 ```
 interfaces {
 {% for i in nb.interfaces if i.mode %}
