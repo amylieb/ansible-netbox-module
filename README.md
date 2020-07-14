@@ -7,8 +7,8 @@ Always gathered:
 Gathered by default, but can be skipped if specified:
 * connections: http://<netbox_url>/api/dcim/interface_connections/?device=<device_name>
 * ip addresses: http://<netbox_url>/api/ipam/ip_addresses/?device=<device_name>
-* vlans: http://<netbox_url>/api/ipam/vlans/<id> for each VLAN found in interfaces
-* vrfs: http://<netbox_url>/api/ipam/vrfs/<id> for each VRF found in ip addresses
+* vlans: http://<netbox_url>/api/ipam/vlans/<vlan_id> for each VLAN found in interfaces
+* vrfs: http://<netbox_url>/api/ipam/vrfs/<vrf_id> for each VRF found in ip addresses
 
 ## Data output structure
 The output data is returned as a dictionary with keys mapping to netbox API endpoints. The module does very little transformation of the API respose data - you can use the API documentation to get a feel for how the output is structured. There are two key changes the module makes when returning output:
