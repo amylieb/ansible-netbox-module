@@ -25,7 +25,7 @@ Here's a quick example from a playbook that calls this module.
 ```
 - name: get device facts from netbox
   netbox_device_details:
-    netbox_url: http://0.0.0.0:8000
+    netbox_url: "{{ netbox_url }}"
     netbox_token: "{{ netbox_token }}"
     device: "{{ inventory_hostname }}"
     get_connections: True
