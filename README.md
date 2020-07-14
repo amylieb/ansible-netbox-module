@@ -1,5 +1,5 @@
 ## Overview
-This is an ansible module that pulls data for a particular device in netbox. The module uses [pynetbox](https://github.com/digitalocean/pynetbox) to pull API data. Here is a list of the data gathered and the corresponding API call:
+This is an ansible module that leverages [pynetbox](https://github.com/digitalocean/pynetbox) to pull API data from netbox for a particular device. Here is a list of the data gathered and the corresponding API call used:
 
 Always gathered:
 * interfaces: http://<netbox_url>/api/dcim/interfaces/?device=<device_name>
@@ -7,8 +7,8 @@ Always gathered:
 Gathered by default, but can be skipped if specified:
 * connections: http://<netbox_url>/api/dcim/interface_connections/?device=<device_name>
 * ip addresses: http://<netbox_url>/api/ipam/ip_addresses/?device=<device_name>
-* vlans: http://<netbox_url>/ipam/api/vlans/<id> for each VLAN found in interfaces
-* vrfs: http://<netbox_url>/ipam/api/vrfs/<id> for each VRF found in ip addresses
+* vlans: http://<netbox_url>/api/ipam/vlans/<id> for each VLAN found in interfaces
+* vrfs: http://<netbox_url>/api/ipam/vrfs/<id> for each VRF found in ip addresses
 
 ## Data output structure
 The output data is returned as a dictionary with keys mapping to netbox API endpoints. The module does very little transformation of the API respose data - you can use the API documentation to get a feel for how the output is structured. There are two key changes the module makes when returning output:
@@ -34,4 +34,42 @@ Here's a quick example from a playbook that calls this module.
     get_ip_addresses: False
   delegate_to: localhost
   register: nb
+```
+## using the results in a template
+Here's a quick template that uses the results (registered as 'nb' in a task)
+```
+interfaces {
+{% for i in nb.interfaces if i.mode %}
+
+  {{ i.name }} {
+     {% if i.description != "" %}
+     description "{{ i.description }}"
+     {% endif %}
+     replace:
+     unit 0 {
+       family ethernet-switching {
+     {% if i.mode.value == 'access' and i.untagged_vlan %}
+        interface-mode access;
+        vlan {
+          members {{ i.untagged_vlan.vid }}
+        }
+     {% elif i.mode.value == 'tagged' %}
+         interface-mode trunk;
+         vlan {
+           members [ {{ i.tagged_vlans | map(attribute='vid') | join(' ') }} ];
+         }
+
+     {% elif i.mode.value == 'tagged-all' %}
+        interface-mode trunk;
+        vlan {
+          members all;
+        }
+     {% endif %}
+       }
+     }
+
+
+  }
+{% endfor %}
+}
 ```
