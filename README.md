@@ -1,5 +1,5 @@
 ## Overview
-This is an ansible module that leverages [pynetbox](https://github.com/digitalocean/pynetbox) to pull API data from netbox for a particular device. Here is a list of the data gathered and the corresponding API call used:
+"netbox_device_details" is an ansible module that leverages [pynetbox](https://github.com/digitalocean/pynetbox) to pull API data from netbox for a particular device. Here is a list of the data gathered and the corresponding API call used:
 
 Always gathered:
 * interfaces: http://<netbox_url>/api/dcim/interfaces/?device=<device_name>
